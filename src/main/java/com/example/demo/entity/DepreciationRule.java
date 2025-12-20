@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "depreciation_rules")
 public class DepreciationRule {
 
     @Id
@@ -20,14 +19,6 @@ public class DepreciationRule {
     private LocalDateTime createdAt;
 
     public DepreciationRule() {}
-
-    public DepreciationRule(String ruleName, String method, Integer usefulLifeYears, Double salvageValue) {
-        this.ruleName = ruleName;
-        this.method = method;
-        this.usefulLifeYears = usefulLifeYears;
-        this.salvageValue = salvageValue;
-        this.createdAt = LocalDateTime.now();
-    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
