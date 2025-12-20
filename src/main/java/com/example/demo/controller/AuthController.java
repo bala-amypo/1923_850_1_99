@@ -26,29 +26,29 @@ public class AuthController {
     
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody User user) {
-        User registeredUser = userService.registerUser(user);
-        return ResponseEntity.ok(registeredUser);
+        User createdUser = userService.registerUser(user);
+        return ResponseEntity.ok(createdUser);
     }
     
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
-        User user = userService.findByEmail(authRequest.getEmail());
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+        User user = userService.findByEmail(request.getEmail());
         
-        if (!passwordEncoder.matches(authRequest.getPassword(), user.getPassword())) {
-            return ResponseEntity.badRequest().build();
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            return ResponseEntity.status(401).build();
         }
         
         String token = jwtUtil.generateToken(
-                user.getEmail(),
-                user.getId(),
-                user.getRoles().stream().map(role -> role.getName()).collect(Collectors.toSet())
+            user.getEmail(),
+            user.getId(),
+            user.getRoles().stream().map(role -> role.getName()).collect(Collectors.toSet())
         );
         
         AuthResponse response = new AuthResponse(
-                token,
-                user.getId(),
-                user.getEmail(),
-                user.getRoles().stream().map(role -> role.getName()).collect(Collectors.toSet())
+            token,
+            user.getId(),
+            user.getEmail(),
+            user.getRoles().stream().map(role -> role.getName()).collect(Collectors.toSet())
         );
         
         return ResponseEntity.ok(response);
