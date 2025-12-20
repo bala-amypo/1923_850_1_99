@@ -17,7 +17,8 @@ public class AssetLifecycleEventServiceImpl implements AssetLifecycleEventServic
     private final AssetLifecycleEventRepository eventRepository;
     private final AssetRepository assetRepository;
     
-    public AssetLifecycleEventServiceImpl(AssetLifecycleEventRepository eventRepository, AssetRepository assetRepository) {
+    public AssetLifecycleEventServiceImpl(AssetLifecycleEventRepository eventRepository, 
+                                        AssetRepository assetRepository) {
         this.eventRepository = eventRepository;
         this.assetRepository = assetRepository;
     }
@@ -25,18 +26,18 @@ public class AssetLifecycleEventServiceImpl implements AssetLifecycleEventServic
     @Override
     public AssetLifecycleEvent logEvent(Long assetId, AssetLifecycleEvent event) {
         Asset asset = assetRepository.findById(assetId)
-                .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
         
         if (event.getEventType() == null || event.getEventType().trim().isEmpty()) {
             throw new IllegalArgumentException("Event type is required");
         }
         
         if (event.getEventDescription() == null || event.getEventDescription().trim().isEmpty()) {
-            throw new IllegalArgumentException("Event description must not be blank");
+            throw new IllegalArgumentException("Event description cannot be blank");
         }
         
         if (event.getEventDate().isAfter(LocalDate.now())) {
-            throw new IllegalArgumentException("Event date must not be in the future");
+            throw new IllegalArgumentException("Event date cannot be in the future");
         }
         
         event.setAsset(asset);

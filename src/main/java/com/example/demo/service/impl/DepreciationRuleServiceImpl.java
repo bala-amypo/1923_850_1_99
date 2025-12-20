@@ -26,7 +26,7 @@ public class DepreciationRuleServiceImpl implements DepreciationRuleService {
             throw new IllegalArgumentException("Salvage value must be greater than or equal to 0");
         }
         
-        if (!rule.getMethod().equals("STRAIGHT_LINE") && !rule.getMethod().equals("DECLINING_BALANCE")) {
+        if (!"STRAIGHT_LINE".equals(rule.getMethod()) && !"DECLINING_BALANCE".equals(rule.getMethod())) {
             throw new IllegalArgumentException("Method must be STRAIGHT_LINE or DECLINING_BALANCE");
         }
         

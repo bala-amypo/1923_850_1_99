@@ -29,10 +29,10 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public Asset createAsset(Long vendorId, Long ruleId, Asset asset) {
         Vendor vendor = vendorRepository.findById(vendorId)
-                .orElseThrow(() -> new ResourceNotFoundException("Vendor not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Vendor not found"));
         
         DepreciationRule rule = depreciationRuleRepository.findById(ruleId)
-                .orElseThrow(() -> new ResourceNotFoundException("Depreciation rule not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Depreciation rule not found"));
         
         if (asset.getPurchaseCost() <= 0) {
             throw new IllegalArgumentException("Purchase cost must be greater than 0");
@@ -63,6 +63,6 @@ public class AssetServiceImpl implements AssetService {
     @Override
     public Asset getAsset(Long id) {
         return assetRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
     }
 }

@@ -2,7 +2,6 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.Asset;
 import com.example.demo.entity.AssetDisposal;
-import com.example.demo.entity.Role;
 import com.example.demo.entity.User;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.AssetDisposalRepository;
@@ -20,7 +19,7 @@ public class AssetDisposalServiceImpl implements AssetDisposalService {
     private final UserRepository userRepository;
     
     public AssetDisposalServiceImpl(AssetDisposalRepository disposalRepository, 
-                                   AssetRepository assetRepository, UserRepository userRepository) {
+                                  AssetRepository assetRepository, UserRepository userRepository) {
         this.disposalRepository = disposalRepository;
         this.assetRepository = assetRepository;
         this.userRepository = userRepository;
@@ -29,7 +28,7 @@ public class AssetDisposalServiceImpl implements AssetDisposalService {
     @Override
     public AssetDisposal requestDisposal(Long assetId, AssetDisposal disposal) {
         Asset asset = assetRepository.findById(assetId)
-                .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Asset not found"));
         
         if (disposal.getDisposalValue() < 0) {
             throw new IllegalArgumentException("Disposal value must be greater than or equal to 0");
@@ -44,14 +43,13 @@ public class AssetDisposalServiceImpl implements AssetDisposalService {
     @Override
     public AssetDisposal approveDisposal(Long disposalId, Long adminId) {
         AssetDisposal disposal = disposalRepository.findById(disposalId)
-                .orElseThrow(() -> new ResourceNotFoundException("Disposal not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Disposal not found"));
         
         User admin = userRepository.findById(adminId)
-                .orElseThrow(() -> new ResourceNotFoundException("Admin user not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Admin user not found"));
         
         boolean isAdmin = admin.getRoles().stream()
-                .map(Role::getName)
-                .anyMatch(role -> role.equals("ADMIN"));
+            .anyMatch(role -> "ADMIN".equals(role.getName()));
         
         if (!isAdmin) {
             throw new IllegalArgumentException("User must have ADMIN role to approve disposals");

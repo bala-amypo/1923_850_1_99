@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
         
         if (user.getRoles().isEmpty()) {
             Role userRole = roleRepository.findByName("USER")
-                    .orElseThrow(() -> new ResourceNotFoundException("USER role not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Default role not found"));
             user.setRoles(Set.of(userRole));
         }
         
@@ -45,12 +45,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
     
     @Override
     public User findById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }
