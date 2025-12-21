@@ -26,31 +26,39 @@ public class AuthController {
     
     @PostMapping("/register")
     public ResponseEntity<User> register(@RequestBody User user) {
-        User createdUser = userService.registerUser(user);
-        return ResponseEntity.ok(createdUser);
+        try {
+            User createdUser = userService.registerUser(user);
+            return ResponseEntity.ok(createdUser);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
     
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
-        User user = userService.findByEmail(request.getEmail());
-        
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return ResponseEntity.status(401).build();
+        try {
+            User user = userService.findByEmail(request.getEmail());
+            
+            if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+                return ResponseEntity.status(401).build();
+            }
+            
+            String token = jwtUtil.generateToken(
+                user.getEmail(),
+                user.getId(),
+                user.getRoles().stream().map(role -> role.getName()).collect(Collectors.toSet())
+            );
+            
+            AuthResponse response = new AuthResponse(
+                token,
+                user.getId(),
+                user.getEmail(),
+                user.getRoles().stream().map(role -> role.getName()).collect(Collectors.toSet())
+            );
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(null);
         }
-        
-        String token = jwtUtil.generateToken(
-            user.getEmail(),
-            user.getId(),
-            user.getRoles().stream().map(role -> role.getName()).collect(Collectors.toSet())
-        );
-        
-        AuthResponse response = new AuthResponse(
-            token,
-            user.getId(),
-            user.getEmail(),
-            user.getRoles().stream().map(role -> role.getName()).collect(Collectors.toSet())
-        );
-        
-        return ResponseEntity.ok(response);
     }
 }
