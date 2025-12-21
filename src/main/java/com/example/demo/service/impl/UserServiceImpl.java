@@ -33,7 +33,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreatedAt(LocalDateTime.now());
         
-        if (user.getRoles().isEmpty()) {
+        if (user.getRoles() == null || user.getRoles().isEmpty()) {
             Role userRole = roleRepository.findByName("USER")
                 .orElseThrow(() -> new ResourceNotFoundException("Default role not found"));
             user.setRoles(Set.of(userRole));
