@@ -21,25 +21,41 @@ public class AssetController {
     public ResponseEntity<Asset> createAsset(@PathVariable Long vendorId, 
                                            @PathVariable Long ruleId, 
                                            @RequestBody Asset asset) {
-        Asset createdAsset = assetService.createAsset(vendorId, ruleId, asset);
-        return ResponseEntity.ok(createdAsset);
+        try {
+            Asset createdAsset = assetService.createAsset(vendorId, ruleId, asset);
+            return ResponseEntity.ok(createdAsset);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
     
     @GetMapping
     public ResponseEntity<List<Asset>> getAllAssets() {
-        List<Asset> assets = assetService.getAllAssets();
-        return ResponseEntity.ok(assets);
+        try {
+            List<Asset> assets = assetService.getAllAssets();
+            return ResponseEntity.ok(assets);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get assets");
+        }
     }
     
     @GetMapping("/status/{status}")
     public ResponseEntity<List<Asset>> getAssetsByStatus(@PathVariable String status) {
-        List<Asset> assets = assetService.getAssetsByStatus(status);
-        return ResponseEntity.ok(assets);
+        try {
+            List<Asset> assets = assetService.getAssetsByStatus(status);
+            return ResponseEntity.ok(assets);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get assets by status");
+        }
     }
     
     @GetMapping("/{id}")
     public ResponseEntity<Asset> getAsset(@PathVariable Long id) {
-        Asset asset = assetService.getAsset(id);
-        return ResponseEntity.ok(asset);
+        try {
+            Asset asset = assetService.getAsset(id);
+            return ResponseEntity.ok(asset);
+        } catch (Exception e) {
+            throw new RuntimeException("Asset not found");
+        }
     }
 }

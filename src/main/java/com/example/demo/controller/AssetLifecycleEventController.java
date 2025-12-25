@@ -20,13 +20,21 @@ public class AssetLifecycleEventController {
     @PostMapping("/{assetId}")
     public ResponseEntity<AssetLifecycleEvent> logEvent(@PathVariable Long assetId, 
                                                        @RequestBody AssetLifecycleEvent event) {
-        AssetLifecycleEvent loggedEvent = eventService.logEvent(assetId, event);
-        return ResponseEntity.ok(loggedEvent);
+        try {
+            AssetLifecycleEvent loggedEvent = eventService.logEvent(assetId, event);
+            return ResponseEntity.ok(loggedEvent);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
     
     @GetMapping("/asset/{assetId}")
     public ResponseEntity<List<AssetLifecycleEvent>> getEventsForAsset(@PathVariable Long assetId) {
-        List<AssetLifecycleEvent> events = eventService.getEventsForAsset(assetId);
-        return ResponseEntity.ok(events);
+        try {
+            List<AssetLifecycleEvent> events = eventService.getEventsForAsset(assetId);
+            return ResponseEntity.ok(events);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get events");
+        }
     }
 }

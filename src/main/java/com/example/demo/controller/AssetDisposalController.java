@@ -18,14 +18,22 @@ public class AssetDisposalController {
     @PostMapping("/request/{assetId}")
     public ResponseEntity<AssetDisposal> requestDisposal(@PathVariable Long assetId, 
                                                         @RequestBody AssetDisposal disposal) {
-        AssetDisposal requestedDisposal = disposalService.requestDisposal(assetId, disposal);
-        return ResponseEntity.ok(requestedDisposal);
+        try {
+            AssetDisposal requestedDisposal = disposalService.requestDisposal(assetId, disposal);
+            return ResponseEntity.ok(requestedDisposal);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
     
     @PutMapping("/approve/{disposalId}/{adminId}")
     public ResponseEntity<AssetDisposal> approveDisposal(@PathVariable Long disposalId, 
                                                         @PathVariable Long adminId) {
-        AssetDisposal approvedDisposal = disposalService.approveDisposal(disposalId, adminId);
-        return ResponseEntity.ok(approvedDisposal);
+        try {
+            AssetDisposal approvedDisposal = disposalService.approveDisposal(disposalId, adminId);
+            return ResponseEntity.ok(approvedDisposal);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 }
