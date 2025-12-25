@@ -24,24 +24,40 @@ public class UserServiceImpl implements UserService {
     
     @Override
     public User registerUser(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email already exists");
+        try {
+            if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+                throw new IllegalArgumentException("Email already exists");
+            }
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            Role userRole = roleRepository.findByName("USER").orElseGet(() -> roleRepository.save(new Role("USER")));
+            user.getRoles().add(userRole);
+            return userRepository.save(user);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        Role userRole = roleRepository.findByName("USER").orElseGet(() -> roleRepository.save(new Role("USER")));
-        user.getRoles().add(userRole);
-        return userRepository.save(user);
     }
     
     @Override
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        try {
+            return userRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding user");
+        }
     }
     
     @Override
     public User findById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        try {
+            return userRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Error finding user");
+        }
     }
 }
