@@ -17,7 +17,11 @@ public class DepreciationRuleController {
     
     @PostMapping
     public ResponseEntity<DepreciationRule> createRule(@RequestBody DepreciationRule rule) {
-        DepreciationRule createdRule = depreciationRuleService.createRule(rule);
-        return ResponseEntity.ok(createdRule);
+        try {
+            DepreciationRule createdRule = depreciationRuleService.createRule(rule);
+            return ResponseEntity.ok(createdRule);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 }

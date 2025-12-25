@@ -19,13 +19,21 @@ public class VendorController {
     
     @PostMapping
     public ResponseEntity<Vendor> createVendor(@RequestBody Vendor vendor) {
-        Vendor createdVendor = vendorService.createVendor(vendor);
-        return ResponseEntity.ok(createdVendor);
+        try {
+            Vendor createdVendor = vendorService.createVendor(vendor);
+            return ResponseEntity.ok(createdVendor);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
     
     @GetMapping
     public ResponseEntity<List<Vendor>> getAllVendors() {
-        List<Vendor> vendors = vendorService.getAllVendors();
-        return ResponseEntity.ok(vendors);
+        try {
+            List<Vendor> vendors = vendorService.getAllVendors();
+            return ResponseEntity.ok(vendors);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get vendors");
+        }
     }
 }
