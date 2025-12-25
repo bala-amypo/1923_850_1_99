@@ -10,29 +10,27 @@ public class AssetDisposal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    
     @OneToOne
-    @JoinColumn(name = "asset_id", nullable = false)
+    @JoinColumn(name = "asset_id")
     private Asset asset;
-
-    @Column(name = "disposal_method", nullable = false)
+    
     private String disposalMethod;
-
-    @Column(name = "disposal_value", nullable = false)
+    
     private Double disposalValue;
-
-    @Column(name = "disposal_date", nullable = false)
+    
     private LocalDate disposalDate;
-
+    
     @ManyToOne
     @JoinColumn(name = "approved_by")
     private User approvedBy;
-
-    @Column(name = "created_at")
+    
     private LocalDateTime createdAt;
-
-    public AssetDisposal() {}
-
+    
+    public AssetDisposal() {
+        this.createdAt = LocalDateTime.now();
+    }
+    
     public AssetDisposal(Asset asset, String disposalMethod, Double disposalValue, LocalDate disposalDate, User approvedBy) {
         this.asset = asset;
         this.disposalMethod = disposalMethod;
@@ -41,26 +39,26 @@ public class AssetDisposal {
         this.approvedBy = approvedBy;
         this.createdAt = LocalDateTime.now();
     }
-
+    
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-
+    
     public Asset getAsset() { return asset; }
     public void setAsset(Asset asset) { this.asset = asset; }
-
+    
     public String getDisposalMethod() { return disposalMethod; }
     public void setDisposalMethod(String disposalMethod) { this.disposalMethod = disposalMethod; }
-
+    
     public Double getDisposalValue() { return disposalValue; }
     public void setDisposalValue(Double disposalValue) { this.disposalValue = disposalValue; }
-
+    
     public LocalDate getDisposalDate() { return disposalDate; }
     public void setDisposalDate(LocalDate disposalDate) { this.disposalDate = disposalDate; }
-
+    
     public User getApprovedBy() { return approvedBy; }
     public void setApprovedBy(User approvedBy) { this.approvedBy = approvedBy; }
-
+    
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
