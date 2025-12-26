@@ -2,7 +2,6 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "assets")
@@ -15,28 +14,18 @@ public class Asset {
     private String assetTag;
     
     private String assetName;
+    private LocalDate purchaseDate;
+    private Double purchaseCost;
+    private String status = "ACTIVE";
     
     @ManyToOne
     @JoinColumn(name = "vendor_id")
     private Vendor vendor;
     
-    private LocalDate purchaseDate;
-    
-    private Double purchaseCost;
-    
     @ManyToOne
     @JoinColumn(name = "depreciation_rule_id")
     private DepreciationRule depreciationRule;
     
-    private String status = "ACTIVE";
-    
-    private LocalDateTime createdAt;
-    
-    public Asset() {
-        this.createdAt = LocalDateTime.now();
-    }
-    
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     
@@ -46,21 +35,18 @@ public class Asset {
     public String getAssetName() { return assetName; }
     public void setAssetName(String assetName) { this.assetName = assetName; }
     
-    public Vendor getVendor() { return vendor; }
-    public void setVendor(Vendor vendor) { this.vendor = vendor; }
-    
     public LocalDate getPurchaseDate() { return purchaseDate; }
     public void setPurchaseDate(LocalDate purchaseDate) { this.purchaseDate = purchaseDate; }
     
     public Double getPurchaseCost() { return purchaseCost; }
     public void setPurchaseCost(Double purchaseCost) { this.purchaseCost = purchaseCost; }
     
-    public DepreciationRule getDepreciationRule() { return depreciationRule; }
-    public void setDepreciationRule(DepreciationRule depreciationRule) { this.depreciationRule = depreciationRule; }
-    
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
     
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public Vendor getVendor() { return vendor; }
+    public void setVendor(Vendor vendor) { this.vendor = vendor; }
+    
+    public DepreciationRule getDepreciationRule() { return depreciationRule; }
+    public void setDepreciationRule(DepreciationRule depreciationRule) { this.depreciationRule = depreciationRule; }
 }
