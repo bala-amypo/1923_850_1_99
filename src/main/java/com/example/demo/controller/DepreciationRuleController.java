@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/rules")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class DepreciationRuleController {
     
     private final DepreciationRuleService depreciationRuleService;

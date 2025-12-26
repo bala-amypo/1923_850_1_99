@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/assets")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class AssetController {
     
     private final AssetService assetService;

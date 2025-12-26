@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/events")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class AssetLifecycleEventController {
     
     private final AssetLifecycleEventService eventService;
