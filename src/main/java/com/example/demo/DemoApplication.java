@@ -13,3 +13,7 @@ public class DemoApplication {
         SpringApplication.run(DemoApplication.class, args);
     }
 }
+
+
+
+mvn test -Dtest=FullIntegrationTest#test70_registerEndpoint_canRegisterAndLogin -X
