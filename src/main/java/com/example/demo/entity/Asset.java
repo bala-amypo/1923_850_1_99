@@ -2,6 +2,9 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "assets")
@@ -16,20 +19,50 @@ public class Asset {
 
     private String assetName;
 
-    private LocalDate purchaseDate;
-
-    private Double purchaseCost;
-
-    private String status = "ACTIVE";
-
     @ManyToOne
     @JoinColumn(name = "vendor_id")
     private Vendor vendor;
+
+    private LocalDate purchaseDate;
+    private Double purchaseCost;
 
     @ManyToOne
     @JoinColumn(name = "depreciation_rule_id")
     private DepreciationRule depreciationRule;
 
+    // ACTIVE, MAINTENANCE, DISPOSED
+    private String status;
+
+    private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "asset", cascade = CascadeType.ALL)
+    private List<AssetLifecycleEvent> events = new ArrayList<>();
+
+    @OneToOne(mappedBy = "asset", cascade = CascadeType.ALL)
+    private AssetDisposal disposal;
+
+    public Asset() {
+    }
+
+    public Asset(String assetTag, String assetName, Vendor vendor, LocalDate purchaseDate, Double purchaseCost,
+            DepreciationRule depreciationRule) {
+        this.assetTag = assetTag;
+        this.assetName = assetName;
+        this.vendor = vendor;
+        this.purchaseDate = purchaseDate;
+        this.purchaseCost = purchaseCost;
+        this.depreciationRule = depreciationRule;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        if (this.status == null) {
+            this.status = "ACTIVE";
+        }
+    }
+
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -54,6 +87,14 @@ public class Asset {
         this.assetName = assetName;
     }
 
+    public Vendor getVendor() {
+        return vendor;
+    }
+
+    public void setVendor(Vendor vendor) {
+        this.vendor = vendor;
+    }
+
     public LocalDate getPurchaseDate() {
         return purchaseDate;
     }
@@ -70,6 +111,14 @@ public class Asset {
         this.purchaseCost = purchaseCost;
     }
 
+    public DepreciationRule getDepreciationRule() {
+        return depreciationRule;
+    }
+
+    public void setDepreciationRule(DepreciationRule depreciationRule) {
+        this.depreciationRule = depreciationRule;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -78,19 +127,27 @@ public class Asset {
         this.status = status;
     }
 
-    public Vendor getVendor() {
-        return vendor;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setVendor(Vendor vendor) {
-        this.vendor = vendor;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public DepreciationRule getDepreciationRule() {
-        return depreciationRule;
+    public List<AssetLifecycleEvent> getEvents() {
+        return events;
     }
 
-    public void setDepreciationRule(DepreciationRule depreciationRule) {
-        this.depreciationRule = depreciationRule;
+    public void setEvents(List<AssetLifecycleEvent> events) {
+        this.events = events;
+    }
+
+    public AssetDisposal getDisposal() {
+        return disposal;
+    }
+
+    public void setDisposal(AssetDisposal disposal) {
+        this.disposal = disposal;
     }
 }

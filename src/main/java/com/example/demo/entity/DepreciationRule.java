@@ -1,6 +1,9 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "depreciation_rules")
@@ -13,26 +16,86 @@ public class DepreciationRule {
     @Column(unique = true, nullable = false)
     private String ruleName;
 
+    // STRAIGHT_LINE / DECLINING_BALANCE
     private String method;
+
     private Integer usefulLifeYears;
     private Double salvageValue;
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    private LocalDateTime createdAt;
 
-    public String getRuleName() { return ruleName; }
-    public void setRuleName(String ruleName) { this.ruleName = ruleName; }
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    @OneToMany(mappedBy = "depreciationRule")
+    private List<Asset> assets = new ArrayList<>();
 
-    public String getMethod() { return method; }
-    public void setMethod(String method) { this.method = method; }
+    public DepreciationRule() {
+    }
 
-    public Integer getUsefulLifeYears() { return usefulLifeYears; }
+    public DepreciationRule(String ruleName, String method, Integer usefulLifeYears, Double salvageValue) {
+        this.ruleName = ruleName;
+        this.method = method;
+        this.usefulLifeYears = usefulLifeYears;
+        this.salvageValue = salvageValue;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getRuleName() {
+        return ruleName;
+    }
+
+    public void setRuleName(String ruleName) {
+        this.ruleName = ruleName;
+    }
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
+
+    public Integer getUsefulLifeYears() {
+        return usefulLifeYears;
+    }
+
     public void setUsefulLifeYears(Integer usefulLifeYears) {
         this.usefulLifeYears = usefulLifeYears;
     }
 
-    public Double getSalvageValue() { return salvageValue; }
+    public Double getSalvageValue() {
+        return salvageValue;
+    }
+
     public void setSalvageValue(Double salvageValue) {
         this.salvageValue = salvageValue;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public List<Asset> getAssets() {
+        return assets;
+    }
+
+    public void setAssets(List<Asset> assets) {
+        this.assets = assets;
     }
 }

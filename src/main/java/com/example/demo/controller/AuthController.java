@@ -1,70 +1,48 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.AuthRequest;
+import com.example.demo.dto.AuthResponse;
 import com.example.demo.entity.Role;
 import com.example.demo.entity.User;
-import com.example.demo.repository.RoleRepository;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.service.UserService;
 import com.example.demo.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import java.util.*;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
-    private UserRepository userRepository;
-    
+    private AuthenticationManager authenticationManager;
+
     @Autowired
-    private RoleRepository roleRepository;
-    
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    
+    private UserService userService;
+
     @Autowired
     private JwtUtil jwtUtil;
 
     @PostMapping("/register")
-    public ResponseEntity<Map<String, Object>> register(@RequestBody Map<String, String> request) {
-        User user = new User();
-        user.setEmail(request.get("email"));
-        user.setName(request.get("name"));
-        user.setPassword(passwordEncoder.encode(request.get("password")));
-        
-        Role userRole = roleRepository.findByName("USER")
-                .orElseGet(() -> roleRepository.save(new Role("USER")));
-        user.getRoles().add(userRole);
-        
-        User saved = userRepository.save(user);
-        
-        Map<String, Object> response = new HashMap<>();
-        response.put("id", saved.getId());
-        response.put("email", saved.getEmail());
-        response.put("name", saved.getName());
-        
-        return ResponseEntity.ok(response);
+    public ResponseEntity<User> register(@RequestBody User user) {
+        return ResponseEntity.ok(userService.registerUser(user));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> request) {
-        Optional<User> userOpt = userRepository.findByEmail(request.get("email"));
-        if (userOpt.isEmpty() || !passwordEncoder.matches(request.get("password"), userOpt.get().getPassword())) {
-            return ResponseEntity.status(401).build();
-        }
-        
-        User user = userOpt.get();
-        Set<String> roles = new HashSet<>();
-        user.getRoles().forEach(r -> roles.add(r.getName()));
-        
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+        Authentication authenticate = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+
+        User user = userService.findByEmail(request.getEmail());
+        Set<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
         String token = jwtUtil.generateToken(user.getEmail(), user.getId(), roles);
-        
-        Map<String, Object> response = new HashMap<>();
-        response.put("token", token);
-        response.put("user", user.getEmail());
-        
-        return ResponseEntity.ok(response);
+
+        return ResponseEntity.ok(new AuthResponse(token, user.getId(), user.getEmail(), roles));
     }
 }
