@@ -31,19 +31,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
             
-            if (jwtUtil.validateToken(token)) {
-                Claims claims = jwtUtil.getClaims(token);
-                String email = claims.get("email", String.class);
-                @SuppressWarnings("unchecked")
-                List<String> roles = (List<String>) claims.get("roles");
-                
-                List<SimpleGrantedAuthority> authorities = roles.stream()
-                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                        .collect(Collectors.toList());
-                
-                UsernamePasswordAuthenticationToken auth = 
-                    new UsernamePasswordAuthenticationToken(email, null, authorities);
-                SecurityContextHolder.getContext().setAuthentication(auth);
+            try {
+                if (jwtUtil.validateToken(token)) {
+                    Claims claims = jwtUtil.getClaims(token);
+                    String email = claims.get("email", String.class);
+                    @SuppressWarnings("unchecked")
+                    List<String> roles = (List<String>) claims.get("roles");
+                    
+                    if (roles != null) {
+                        List<SimpleGrantedAuthority> authorities = roles.stream()
+                                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                                .collect(Collectors.toList());
+                        
+                        UsernamePasswordAuthenticationToken auth = 
+                            new UsernamePasswordAuthenticationToken(email, null, authorities);
+                        SecurityContextHolder.getContext().setAuthentication(auth);
+                    }
+                }
+            } catch (Exception e) {
+                // Invalid token, continue without authentication
             }
         }
         
