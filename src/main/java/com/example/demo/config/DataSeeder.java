@@ -53,3 +53,4 @@ public class DataSeeder implements CommandLineRunner {
             assetRepo.save(asset);
         }
     }
+}
