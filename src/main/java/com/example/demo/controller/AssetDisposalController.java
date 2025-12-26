@@ -1,4 +1,3 @@
-
 package com.example.demo.controller;
 import com.example.demo.entity.AssetDisposal;
 import com.example.demo.service.AssetDisposalService;
@@ -15,3 +14,4 @@ public class AssetDisposalController {
     @PutMapping("/approve/{disposalId}/{adminId}") public ResponseEntity<?> approve(@PathVariable Long disposalId, @PathVariable Long adminId) {
         return ResponseEntity.ok(service.approveDisposal(disposalId, adminId));
     }
+}
