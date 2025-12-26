@@ -16,4 +16,3 @@ public class DemoApplication {
 
 
 
-mvn test -Dtest=FullIntegrationTest#test70_registerEndpoint_canRegisterAndLogin -X
