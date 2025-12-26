@@ -1,102 +1,30 @@
 package com.example.demo.entity;
-
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "asset_disposals")
+@Entity @Table(name = "asset_disposals")
 public class AssetDisposal {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    @OneToOne
-    @JoinColumn(name = "asset_id", unique = true)
-    private Asset asset;
-
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id;
+    @OneToOne private Asset asset;
     private String disposalMethod;
     private Double disposalValue;
     private LocalDate disposalDate;
-
-    @ManyToOne
-    @JoinColumn(name = "approved_by_user_id")
-    private User approvedBy;
-
+    @ManyToOne private User approvedBy;
     private LocalDateTime createdAt;
-
-    public AssetDisposal() {
-    }
-
-    public AssetDisposal(Asset asset, String disposalMethod, Double disposalValue, LocalDate disposalDate,
-            User approvedBy) {
-        this.asset = asset;
-        this.disposalMethod = disposalMethod;
-        this.disposalValue = disposalValue;
-        this.disposalDate = disposalDate;
-        this.approvedBy = approvedBy;
-    }
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Asset getAsset() {
-        return asset;
-    }
-
-    public void setAsset(Asset asset) {
-        this.asset = asset;
-    }
-
-    public String getDisposalMethod() {
-        return disposalMethod;
-    }
-
-    public void setDisposalMethod(String disposalMethod) {
-        this.disposalMethod = disposalMethod;
-    }
-
-    public Double getDisposalValue() {
-        return disposalValue;
-    }
-
-    public void setDisposalValue(Double disposalValue) {
-        this.disposalValue = disposalValue;
-    }
-
-    public LocalDate getDisposalDate() {
-        return disposalDate;
-    }
-
-    public void setDisposalDate(LocalDate disposalDate) {
-        this.disposalDate = disposalDate;
-    }
-
-    public User getApprovedBy() {
-        return approvedBy;
-    }
-
-    public void setApprovedBy(User approvedBy) {
-        this.approvedBy = approvedBy;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+    public AssetDisposal() {}
+    @PrePersist public void prePersist() { this.createdAt = LocalDateTime.now(); }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public Asset getAsset() { return asset; }
+    public void setAsset(Asset asset) { this.asset = asset; }
+    public String getDisposalMethod() { return disposalMethod; }
+    public void setDisposalMethod(String disposalMethod) { this.disposalMethod = disposalMethod; }
+    public Double getDisposalValue() { return disposalValue; }
+    public void setDisposalValue(Double disposalValue) { this.disposalValue = disposalValue; }
+    public LocalDate getDisposalDate() { return disposalDate; }
+    public void setDisposalDate(LocalDate disposalDate) { this.disposalDate = disposalDate; }
+    public User getApprovedBy() { return approvedBy; }
+    public void setApprovedBy(User approvedBy) { this.approvedBy = approvedBy; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
 }
