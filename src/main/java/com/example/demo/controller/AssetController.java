@@ -1,62 +1,67 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Asset;
-import com.example.demo.service.AssetService;
+import com.example.demo.entity.DepreciationRule;
+import com.example.demo.entity.Vendor;
+import com.example.demo.repository.AssetRepository;
+import com.example.demo.repository.DepreciationRuleRepository;
+import com.example.demo.repository.VendorRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/assets")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class AssetController {
+
+    @Autowired
+    private AssetRepository assetRepository;
     
-    private final AssetService assetService;
+    @Autowired
+    private VendorRepository vendorRepository;
     
-    public AssetController(AssetService assetService) {
-        this.assetService = assetService;
-    }
-    
+    @Autowired
+    private DepreciationRuleRepository ruleRepository;
+
     @PostMapping("/{vendorId}/{ruleId}")
-    public ResponseEntity<Asset> createAsset(@PathVariable Long vendorId, 
-                                           @PathVariable Long ruleId, 
-                                           @RequestBody Asset asset) {
+    public ResponseEntity<Asset> createAsset(@PathVariable Long vendorId, @PathVariable Long ruleId, @RequestBody Asset asset) {
         try {
-            Asset createdAsset = assetService.createAsset(vendorId, ruleId, asset);
-            return ResponseEntity.ok(createdAsset);
+            if (asset.getPurchaseCost() < 0) {
+                return ResponseEntity.status(500).build();
+            }
+            
+            Vendor vendor = vendorRepository.findById(vendorId).orElse(null);
+            DepreciationRule rule = ruleRepository.findById(ruleId).orElse(null);
+            
+            if (vendor == null || rule == null) {
+                return ResponseEntity.badRequest().build();
+            }
+            
+            asset.setVendor(vendor);
+            asset.setDepreciationRule(rule);
+            
+            Asset saved = assetRepository.save(asset);
+            return ResponseEntity.ok(saved);
         } catch (Exception e) {
-            throw new IllegalArgumentException(e.getMessage());
+            return ResponseEntity.badRequest().build();
         }
     }
-    
+
     @GetMapping
     public ResponseEntity<List<Asset>> getAllAssets() {
-        try {
-            List<Asset> assets = assetService.getAllAssets();
-            return ResponseEntity.ok(assets);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to get assets");
-        }
+        return ResponseEntity.ok(assetRepository.findAll());
     }
-    
-    @GetMapping("/status/{status}")
-    public ResponseEntity<List<Asset>> getAssetsByStatus(@PathVariable String status) {
-        try {
-            List<Asset> assets = assetService.getAssetsByStatus(status);
-            return ResponseEntity.ok(assets);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to get assets by status");
-        }
-    }
-    
+
     @GetMapping("/{id}")
     public ResponseEntity<Asset> getAsset(@PathVariable Long id) {
-        try {
-            Asset asset = assetService.getAsset(id);
-            return ResponseEntity.ok(asset);
-        } catch (Exception e) {
-            throw new RuntimeException("Asset not found");
-        }
+        return assetRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/status/{status}")
+    public ResponseEntity<List<Asset>> getAssetsByStatus(@PathVariable String status) {
+        return ResponseEntity.ok(assetRepository.findByStatus(status));
     }
 }

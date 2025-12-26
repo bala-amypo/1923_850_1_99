@@ -1,34 +1,41 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Vendor;
-import com.example.demo.service.VendorService;
+import com.example.demo.repository.VendorRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/vendors")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class VendorController {
 
-    private final VendorService vendorService;
-
-    public VendorController(VendorService vendorService) {
-        this.vendorService = vendorService;
-    }
+    @Autowired
+    private VendorRepository vendorRepository;
 
     @PostMapping
     public ResponseEntity<Vendor> createVendor(@RequestBody Vendor vendor) {
         try {
-            return ResponseEntity.ok(vendorService.createVendor(vendor));
+            if (vendorRepository.findByVendorName(vendor.getVendorName()).isPresent()) {
+                return ResponseEntity.badRequest().build();
+            }
+            Vendor saved = vendorRepository.save(vendor);
+            return ResponseEntity.ok(saved);
         } catch (Exception e) {
-            throw new IllegalArgumentException(e.getMessage());
+            return ResponseEntity.badRequest().build();
         }
     }
 
     @GetMapping
     public ResponseEntity<List<Vendor>> getAllVendors() {
-        return ResponseEntity.ok(vendorService.getAllVendors());
+        return ResponseEntity.ok(vendorRepository.findAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Vendor> getVendor(@PathVariable Long id) {
+        return vendorRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
