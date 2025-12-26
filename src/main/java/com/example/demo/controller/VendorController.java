@@ -11,30 +11,24 @@ import java.util.List;
 @RequestMapping("/api/vendors")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class VendorController {
-    
+
     private final VendorService vendorService;
-    
+
     public VendorController(VendorService vendorService) {
         this.vendorService = vendorService;
     }
-    
+
     @PostMapping
     public ResponseEntity<Vendor> createVendor(@RequestBody Vendor vendor) {
         try {
-            Vendor createdVendor = vendorService.createVendor(vendor);
-            return ResponseEntity.ok(createdVendor);
+            return ResponseEntity.ok(vendorService.createVendor(vendor));
         } catch (Exception e) {
             throw new IllegalArgumentException(e.getMessage());
         }
     }
-    
+
     @GetMapping
     public ResponseEntity<List<Vendor>> getAllVendors() {
-        try {
-            List<Vendor> vendors = vendorService.getAllVendors();
-            return ResponseEntity.ok(vendors);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to get vendors");
-        }
+        return ResponseEntity.ok(vendorService.getAllVendors());
     }
 }
