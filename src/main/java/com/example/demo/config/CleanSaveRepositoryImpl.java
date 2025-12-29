@@ -13,7 +13,7 @@ public class CleanSaveRepositoryImpl<T, ID extends Serializable> extends SimpleJ
     @Override
     public <S extends T> S save(S entity) {
         if (entity.getClass().isAnonymousClass()) {
-            try {
+            try {   
                 Class<?> superclass = entity.getClass().getSuperclass();
                 S clean = (S) superclass.getDeclaredConstructor().newInstance();
                 BeanUtils.copyProperties(entity, clean);
